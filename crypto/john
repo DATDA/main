@@ -1,0 +1,6 @@
+// Chris's notes on John The Ripper
+
+# Pipe a directory of wordlists into john
+ls /John/Wlist | xargs -t -I grabthefiles  
+	john --session=xargs --wordlist=/John/Wlist/grabthefiles  
+	--rules [etc etc..... ]
