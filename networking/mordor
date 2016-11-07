@@ -2,6 +2,8 @@
 
 sudo putty /dev/ttyUSB0 -serial -sercfg 9600,8,n,1,N
 
+hit enter
+
 ? for help
 or help
 
@@ -9,3 +11,22 @@ show
 
 Cisco Internetwork Operating System Software
 IOS C2900WL Software Version 12.0(5)WC9
+
+http://www.techrepublic.com/blog/data-center/10-commands-you-should-master-when-working-with-the-cisco-ios-104071/
+http://www.simulationexams.com/tutorials/ccna/cisco-ios.htm
+http://www.cisco.com/c/en/us/td/docs/routers/access/500/520/software/configuration/guide/520_SCG_Book/520scg_ios_basic.html#wp1014744
+
+
+Levels of shell heirarchy which determine what you can do
+
+User EXEC level (>): basic monitoring commands
+  Default when connecting
+Privileged EXEC level (#): access to all router commands including config and mgmt
+  type: "enable"
+Global configuration mode (config)#: change overall system config
+  type: "configure"
+Interface configuration mode: change specific interface
+  type: ?
+  
+#show interface FastEthernet0/4
+#show ip interface
