@@ -1,8 +1,11 @@
+# Encrypted Zip-file cracker. Will be updated to be more friendly, eventually.
 
+# Works 100% of the time, 80% of the time. Else shows false-positives.
+
+# Shamelessly stolen from Violent-Python:
 # https://github.com/igniteflow/violent-python/blob/master/pwd-crackers/zip-crack.py
 
 import zipfile
-
 
 def main():
 	"""
