@@ -1,0 +1,103 @@
+This method works on WPA and WPA2. There are other GUI and CLI tools that are
+much easier to use, but their success rate is much lower.
+
+Tools we'll use:
+  Macchanger
+  Airmon-ng
+  Airodump-ng
+  Aireplay-ng (optional)
+  Aircrack-ng
+  John the Ripper (optional)
+
+Other Tools:
+  GUI:
+  -Fern
+  CLI:
+  -Wifite
+  
+First things first, find your interface and change the MAC address
+> ifconfig
+
+This will list all the networking interfaces, and you're looking for 
+"wlan0" or a similarly nammed interface.
+
+Then, actually change the MAC to a random MAC of the same interface type
+> macchanger -A wlan0
+
+Next, we'll try to put our wireless interface into monitor mode.
+Not all cards allow this though, and for most you must use root privledges.
+
+> airmon-ng start wlan0
+
+If successfull, airmon-ng will display that monitor mode is on for
+an iterface named "wlan0mon" or "mon0" or similar.
+
+Now it's time to scan for networks to target
+
+> airodump-ng wlan0mon
+
+Once we've found a sutiable candidate, we'll tailor airodump to just
+give us information on that router/access point. We'll need the "BSSID",
+channel, and a new filename to put our handshake captures.
+
+> airodump-ng --bssid 12:34:56:78:90:12 -c 11 -w newcapturefile wlan0mon
+
+Now we sit and wait. We can either wait for airodump to capture a handshake,
+or we can also open-up and use wireshark if airodump fails to perform.
+
+If waiting with airodump, simple wait for the message "[WPA handshake:..." 
+to appear near the top. Then Ctrl^C to exit and you're done!
+
+If waiting with wireshark, filter your displayed packets by "eapol", and 
+wait for handshakes 1/4 - 4/4 for a device connecting to your target router.
+Then save as .pcap and you're done!
+
+You can run these both concurrently to increase your chances.
+
+If impatient, you can deauthenticate a device on the network, to force it
+to re-authenticate, and re-do the handshake process. This has varrying levels
+of success, but can be much faster than waiting for a device to naturally
+re-connect to the target.
+
+-0 1 -> tells aireplay to send '1' deauthentication packet
+-a -> the bssid of your router
+-c -> the bssid of a device connected to the router,
+      this is found watching airodump, and is optional (but recommended)
+
+> aireplay-ng -0 1 -a 12:34:56:78:90:12 -c 09:87:65:43:21:09 wlan0mon
+
+Once you're successfully captured a handshake (and saved the file on disk)
+you can exit all programs/proccesses and turn off networking. In fact, you
+can do the rest on your super-duper cracking server (if you happen to have one). 
+
+-w wordlist.txt -> a great wordlist that hopefully contains the password
+-b 12:...:09 -> bssid of target router
+
+> aircrack-ng -w ./wordlist.txt -b 12:34:56:78:90:12 ./newcapturefile.cap
+
+DONE!
+
+Or not? If not, then sadly the password wasn't in your dictionary. Try another one!
+If that doesn't work and you have some spare time and computing power, we can
+pipe the output of John the Ripper into aircrack, which means we can use John's 
+great brute-forcing rules in Aircrack.
+
+--incremental -> use John in truly brute-force mode
+--session=wifi -> name the session so you can restore it later instead of starting over
+--stdout -> make John output guesses to stdout
+-w - -> make aircrack listen for passwords from stdin
+
+> john --incremental --session=wifi --stdout
+  | aircrack-ng -b 12:34:56:78:90:12 ./newcapturefile.cap -w -
+  
+Should you need to pause and resume John, you can resume from where you were.
+
+--resume -> resume from where we left off
+
+> john --restore=wifi | aircrack-ng -b 12:34:56:78:90:12 ./newcapturefile.cap -w -
+
+This will (probably) run FOREVER, so keep that in mind. Much better to use your time
+finding and testing good wordlists if brute-force with John doesn't work in the first 24 hours.
+
+Good Luck and Stay Legal!
+-Chris B
