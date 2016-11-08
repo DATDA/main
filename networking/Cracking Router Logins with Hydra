@@ -1,0 +1,60 @@
+Once on or in a network, you can use THC-Hydra to brute-force most routers.
+The trick here is figuring out what type of login the router uses, and
+properly conveying that to Hydra. We'll use an additional tool, BurpSuite,
+to figure out exactly what-type of login a router uses. 
+
+BurpSuite -> A browser proxy, used to deeply sniff anything that comes from 
+          or goes to a local browser.
+          
+BurpSuite seems very intimitating at-first, and it has lots of options for 
+all sorts of things that we won't be using. Simply open it up, head over to
+"Proxy". Then ensure "Intercept is on".
+
+Back to your browser, where you'll change your proxy settings to 127.0.0.1:8080
+
+Now hit up the router login page, and watch the request come up on BurpSuite.
+
+Now search through the requests, and find one that looks like something Hydra
+can deal with:
+
+http[s]-{head|get|post}
+http[s]-{get|post}-form
+http-proxy 
+http-proxy-urlenum 
+
+Then try!
+
+-l -> username, can use '-L' for using lists
+-P -> wordlist.txt, can use '-p' for just one
+http-get -> one of the types Hydra can deal with
+192.168.1.1 -> router's ip
+
+> hydra -l admin -P ./dictionary.txt 192.168.1.1 http-get
+
+http-post-form -> type of login page
+/dvwa/login.php -> relative page address
+username -> field name for username
+^USER^ -> tell Hydra where to put username
+password -> field name for password
+^PASS^ -> tell Hydra where to put passwrod
+Login
+
+
+
+//---Work In Progess---//
+
+// Chris's notes on using THC Hydra
+
+# Login Page where
+# http-post-form is type of request (seen in burpsuite)
+# /dvwa/login.php is page address (ie: 192.168.1.1/dvwa/login.php)
+# username is field name for username (seen in burpsuite and probably on page)
+# ^USER^ tells hydra to put the username there
+# same things with the password stuff
+# Login tells hydra that this is for failed logins
+# Login failed tells hydra that this is what those failed logins look like(burp)
+hydra -l admin -p password 192.168.1.1 http-post-form 
+"/dvwa/login.php:username=^USER^&password=^PASS^&Login=Login:Login failed"
+
+# Cracking ssh login with hydra w/dictionary
+hydra -l admin -p password 192.168.1.2 ssh
