@@ -1,0 +1,37 @@
+John The Ripper is one of the top hash-cracking utilities in the world. 
+Its biggest strengths are its ease-of-use, and its password-generative abilities.
+It's not as fast as Hashcat, but mainly the gap only exists in terms 
+of GPUs now.
+
+John has several main cracking modes:
+
+Iterative -> Real Brute-Force. John can run forever in this mode.
+Wordlist -> Dictionary attack. John runs through an arbitrarily large wordlist.
+
+It also has many addons and flag features:
+
+zip2john -> Allows John to crack encrypted zips
+Rules -> Some say this is the most powerful feature of John. These can
+	allow a user to sculpt exactly what type of passwords john should
+	generate, including sculpting passwords based on a wordlist. It
+	can be used in both iterative and wordlist mode. 
+stdout -> John outputs guesses to the shell, allowing you to pipe John
+	into any other program
+	
+Some examples of John:
+
+Simple brute-forcing with John
+
+> john passwords.txt
+
+Wordlist mode with default rules
+
+> john --wordlist=wordlist.txt --rules passwords.txt
+
+Pipe a directory of wordlists into John
+
+> ls ./folder_of_lists | xargs -t -I grabthefiles
+	john --session=xargs --wordlist=./folder_of_lists/grabthefiles
+	
+Good Luck and Stay Legal!
+-Chris B
