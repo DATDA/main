@@ -1,0 +1,33 @@
+There are a few different ways to crack an encrypted Zip file, some slow, fast, reliable, and not.
+
+The first method (more reliable and faster) you should try is with the
+jumbo versions of John the Ripper.
+
+John comes with a handy utility, zip2john, that extracts the hashes from 
+a zip so John can crack them. 
+
+encrypted.zip -> normally encrypted zip
+hashes_for.john -> new file to put the hashe(s) in
+
+> zip2john encrypted.zip > hashes_for.john
+
+Then just run john in any mode of your choosing on the hashes file.
+
+wordlist.txt -> a wordlist hopefully containing the password
+
+> john --wordlist=./wordlist.txt hashes_for.john
+
+Done!
+
+The second method is with a custom script. The Violent-Python book has
+just such a script, though it's not nearly as reliable (many false-
+positives). 
+
+For now, you'll need to edit the script (zip_crack.py) to change
+the wordlist and zip files. Once done, simply run it!
+
+> python zip_crack.py
+
+Done! (hopefully)
+
+-Chris B
